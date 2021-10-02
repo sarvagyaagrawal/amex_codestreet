@@ -1,0 +1,28 @@
+{% extends "customer/homepage.html" %}
+
+{% block body %}
+<br>
+<marquee direction="margin-right"  style="background-color: rgb(212, 212, 206) ; "><h3 style="color: rgb(228, 15, 15); text-align: center;"> Welcome To Our Portal!</h3></marquee> 
+<br>
+<h2 style="margin-top: 1cm;">ACCOUNT LOGIN </h2>
+
+{% if message %}
+    <div>{{ message }}</div>
+{% endif %}
+<br>
+<h1> LOGIN</h1>
+
+<form class="login-form" action="{% url 'login_details' %}" method="post">
+    {% csrf_token %}
+    
+    <h4>Username : </h4><input type="text" id="username_login" name="username" placeholder="USERNAME" style="padding: 1%;margin:1%">
+    <h4>Password : </h4><input type="password" id="password-login" name="password" placeholder="PASSWORD" style="padding: 1%;margin:1%">
+    
+    
+    <input class="btn btn-primary" type="submit" value="login">
+
+        
+</form>
+Not Registered yet? <a href="{% url 'register' %}">Register Here</a>
+
+{% endblock %}

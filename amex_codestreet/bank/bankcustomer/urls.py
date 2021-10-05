@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .views import DataView
 
 urlpatterns = [
     path('', views.index, name="index"),
@@ -8,8 +9,6 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path('register', views.register, name='register'),
     path(r'customer_dashboard/', views.login_dashboard, name="dashboard"),
-    path(r'customer_dashboard/personal/',views.get_personal_info, name="personal_details"),
-    path(r'customer_dashboard/riskfactor/',views.riskfactor, name="riskfactor"),
-    path(r'customer_dashboard/generate_data_from_bank/',views.generate_data_from_bank, name="generate_data_from_bank")
-
+    path(r'customer_dashboard/enterUBI', views.enterUBI, name="enterUBI"),
+    path('bank/<uuid:id>', DataView.as_view())
 ]

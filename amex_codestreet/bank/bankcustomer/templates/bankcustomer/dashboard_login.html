@@ -1,0 +1,58 @@
+{% extends "bankcustomer/frontpage.html" %}
+
+{% block body %}
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+{% load static %}
+<script src="{% static 'bankcustomer/form.js' %}"></script>
+<h2>Dear</h2>
+<h1 style="color: brown; background-color: burlywood;font-style: italic;">{{request.user.username}}</h1>
+
+<div style="text-align: center;">
+    <a class="btn btn-sm btn-outline-primary personal " data-page="view_details" >View My Bank Account Details</a>
+    <a class="btn btn-sm btn-outline-primary personal" data-page="fill_my_UBI" >Fill Unique Bank Id (UBI)</a>
+    <a class="btn btn-sm btn btn-danger" href="{% url 'logout' %}">Log Out</a>
+</div>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {% if message %}
+        <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3>
+        <button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
+    {% endif %}
+</div>
+
+<form class="UBI_view hidden" action="{% url 'enterUBI'  %}" method="post" id="fill_my_UBI">
+    {% csrf_token %}
+    <label class="form-label">Enter Your Unique Bank ID*</label>
+    <input class="form-control form-control-lg" type="text" id="cust_name" name="fill_UBI" placeholder="Enter UBI here" style="margin: 1%;">
+    <br>
+    <input class="btn btn-primary" type="submit" value="submit form">
+</form>
+
+<form class="UBI_view " action="{% url 'enterUBI'  %}" method="post" id="view_details">
+
+    {% csrf_token %}
+    
+
+    <h2>Your Bank Details</h2>
+    {% if message1 %}
+        <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3>
+        <button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
+    {% endif %}
+    {% for p in cust%}
+    <td>
+        <tr>{{p.cust_ID}}</tr>
+        <tr>{{p.UBI}}</tr>
+        <tr>{{p.credit.due_amt}}</tr>
+        
+        <tr>{{p.loan.due_amt}}</tr>
+    
+    </td>
+    {% endfor %}
+    
+    
+</form>
+
+{% endblock %}

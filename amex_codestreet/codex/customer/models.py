@@ -26,21 +26,18 @@ class present_banking(models.Model):
     
     b_due_amt_curr= models.BigIntegerField()
     
-    b_balance=models.BigIntegerField()
-    b_spending_monthly=models.BigIntegerField()
+    b_balance=models.BigIntegerField() #done
 
     b_saving_monthly=models.BigIntegerField()
 
-    #tot_saving= balance + (monthly_savings*6)
     b_total_savings=models.BigIntegerField()
-    b_total_debt=models.BigIntegerField()
+    
 
     b_spend_mon1=models.BigIntegerField()
     b_spend_mon2=models.BigIntegerField()
     b_spend_mon3=models.BigIntegerField()
     b_spend_mon4=models.BigIntegerField()
-    b_spend_mon5=models.BigIntegerField()
-    b_spend_mon6=models.BigIntegerField()
+    
     
     #amount calculated from the credit cards and loans
     b_due_amt_fut=models.BigIntegerField()
@@ -48,19 +45,29 @@ class present_banking(models.Model):
     #future income=present_income*6
     b_income_fut=models.BigIntegerField()
 
-    b_debt_to_inc=models.IntegerField()
-    b_spend_to_save=models.IntegerField()
+    b_debt_to_inc=models.FloatField()
+    b_spend_to_save=models.FloatField()
     
     b_income=models.BigIntegerField()
     #from regression model
     b_spendings_fut=models.BigIntegerField()
+
+    b_minimum=models.BigIntegerField()
+
+
+    def __str__(self):
+         return f"{self.id} {self.b_due_amt_curr} {self.b_balance} {self.b_saving_monthly} {self.b_total_savings} {self.b_spend_mon1} {self.b_spend_mon2} {self.b_spend_mon3} {self.b_spend_mon4} {self.b_due_amt_fut} {self.b_income_fut} {self.b_debt_to_inc}  {self.b_spend_to_save} {self.b_income} {self.b_spendings_fut} "
+
 
 class future_banking(models.Model):
     user = models.ForeignKey(User,null=True, on_delete=models.CASCADE)
     
     b_savings_opt=models.BigIntegerField()
     b_spend_opt=models.BigIntegerField()
-    b_risk_score=models.IntegerField()
+    b_risk_score=models.FloatField()
+
+    def __str__(self):
+         return f"{self.id} {self.b_savings_opt} {self.b_spend_opt} {self.b_risk_score}"
     
 
 

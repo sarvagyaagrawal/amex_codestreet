@@ -13,21 +13,24 @@
 
 <h2>Dear</h2>
 <h1 style="color: brown; background-color: burlywood;font-style: italic;">{{request.user.username}}</h1>
-<div>
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
     {% if message %}
         <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3>
+        <button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
     {% endif %}
 </div>
 
 <div style="text-align: center;">
     <a class="btn btn-sm btn-outline-primary personal " data-page="personal_info" >Fill My Personal Information</a>
     <a class="btn btn-sm btn-outline-primary personal" data-page="view_my_UBI" >View My Unique Bank Id (UBI)</a>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+    <a class="btn btn-sm btn-outline-primary personal" data-page="my_finance" >View My Finance</a>
+    <a class="btn btn-sm btn btn-danger" href="{% url 'logout' %}">Log Out</a>
 
 </div>
 
 <!------------------------------------------------------------------------->
-<form class="personal-form" action="{% url 'personal_details' %}" method="post" id="personal_info">
+<form class="personal-form" action="{% url 'personal_details'  %}" method="post" id="personal_info">
     {% csrf_token %}
     <br>
     <h2 style="color: blue;">Please fill your details!</h2>
@@ -51,7 +54,7 @@
     <br>
     <input class="btn btn-primary" type="submit" value="submit form">
 </form>
-    <!------------------------------------------------------------------------->
+<!------------------------------------------------------------------------->
 <form class="personal-form" id="view_my_UBI">
     <br>
     
@@ -67,5 +70,30 @@
     <h5 style="text-align: center;color: crimson;"> *Note: Please do not share your Unique Bank Id with anyone except your Bank! </h4>
         <h5 style="text-align: center;color: crimson;padding: 2%;"> Incase of any suspicious activities, report the matter to us immediately! </h4>
 </form>
+<!------------------------------------------------------------------------->
+<form class="personal-form" id="my_finance">
+        <h4 style="color: darkblue;padding-top: 4%;text-align: center;"> See where you will stand?</h4>
+        
+       
+
+        {% if message3 %}
+            <h3 style="color: sienna; text-align: center;background-color:moccasin">{{ message3 }}</h3>
+        {% endif %}
+        {% for p in future%}
+            <h2 style="color: brown;text-align: center;">Calculated Risk Score is {{p.b_risk_score}}</h2>
+        {% endfor %}
+
+        <div style="text-align: center;">
+            <h2>Step 1: Fetch Data From your Bank</h2>/
+            <a class="btn btn-warning" href="{% url 'generate_data_from_bank' %}">Calculate Risk Factor</a>
+        </div>
+
+        <div style="text-align: center;">
+            <h2>Step 2: Generate Risk Score</h2>
+            <a class="btn btn-warning" href="{% url 'riskfactor' %}">Calculate Risk Factor</a>
+        </div>
+       
+</form>
+
 
 {% endblock %}

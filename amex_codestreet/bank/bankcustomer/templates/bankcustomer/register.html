@@ -1,0 +1,38 @@
+{% extends "bankcustomer/frontpage.html" %}
+
+{% block body %}
+
+<h2>Register</h2>
+
+{% if message %}
+    <div>{{ message }}</div>
+{% endif %}
+<!------------------------------------------------------------------------->
+<br>
+    
+<div  >
+    <h5 style="color: firebrick;">Please Register yourself!! </h5>
+    <br>
+    
+    <h5 style="color: firebrick;">See where you stand in financial world!! </h5>
+</div>
+
+
+
+<!------------------------------------------------------------------------->
+
+<form class="login-form" action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+    <input type="text" id="username_login" name="username" placeholder="USERNAME" style="padding: 1%; margin:1% ;">
+    <input type="email" id="email_login" name="email" placeholder="Enter Email Address" style="padding: 1%;margin:1%">
+    <input type="password" id="password-login" name="password" placeholder="PASSWORD" style="padding: 1%;margin:1%">
+    <input type="password" id="c-password-login" name="c_password" placeholder="CONFIRM PASSWORD" style="padding: 1%;margin:1%">
+    
+    <input class="btn btn-primary" type="submit" value="Register">
+
+    
+</form>
+Already have an account? <a href="{% url 'login_details' %}">Login here.</a>
+
+<!------------------------------------------------------------------------->
+{% endblock %}

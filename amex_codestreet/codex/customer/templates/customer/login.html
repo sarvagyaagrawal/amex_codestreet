@@ -1,28 +1,72 @@
 {% extends "customer/homepage.html" %}
 
 {% block body %}
-<br>
-<marquee direction="margin-right"  style="background-color: rgb(212, 212, 206) ; "><h3 style="color: rgb(228, 15, 15); text-align: center;"> Welcome To Our Portal!</h3></marquee> 
-<br>
-<h2 style="margin-top: 1cm;">ACCOUNT LOGIN </h2>
 
+
+<!--
 {% if message %}
     <div>{{ message }}</div>
-{% endif %}
-<br>
-<h1> LOGIN</h1>
+{% endif %}-->
 
-<form class="login-form" action="{% url 'login_details' %}" method="post">
-    {% csrf_token %}
-    
-    <h4>Username : </h4><input type="text" id="username_login" name="username" placeholder="USERNAME" style="padding: 1%;margin:1%">
-    <h4>Password : </h4><input type="password" id="password-login" name="password" placeholder="PASSWORD" style="padding: 1%;margin:1%">
-    
-    
-    <input class="btn btn-primary" type="submit" value="login">
-
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {% if message %}
+        <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3><button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
         
-</form>
-Not Registered yet? <a href="{% url 'register' %}">Register Here</a>
+    {% endif %}
+</div>
+<div class=" container-fluid bg">
+    <br>
+
+        <marquee direction="margin-right"  style="background-color: rgb(212, 212, 206) ; "><h3 style="color: rgb(228, 15, 15); text-align: center;"> Welcome To Our Portal!</h3></marquee> 
+    <br>
+    
+            
+		<div class="row">
+            
+			<div class="col-md-2 col-sm-2 col-xs-6"></div>
+			<div class="col-md-8 col-sm-8 col-xs-24 form-container">
+				
+				<div class="col-md-6 col-sm-6 col-xs-18 info-panel"><h4 style="padding: 3%;">Log in to your account</h2></div>
+				<div class="col-md-6 col-sm-6 col-xs-18">
+
+                    <form class="login-form" action="{% url 'login_details' %}" method="post">
+                        {% csrf_token %}
+                        
+                        <h4>Username : </h4><input type="text" class="form-control" id="username_login" name="username" placeholder="USERNAME" style="padding: 1%;margin:1%">
+                        <h4>Password : </h4><input class="form-control" type="password" id="password-login" name="password" placeholder="PASSWORD" style="padding: 1%;margin:1%">
+                        
+                        
+                        <input class="btn btn-primary btn-block" type="submit" value="login">
+
+                        <div class="form-group">
+							<div style="text-align: center;">New User? <span class="register-here"><a href="{% url 'register' %}">Register Here</a></span></div>
+					    </div>   
+                    </form>
+                
+            
+			</div>
+			</div>
+		</div>
+		<div class="col-md-2 col-sm-2 col-xs-6"></div>
+	</div>
+</div>
+<div class="container">
+    
+    
+</div>
+<!--
+    <div data-bs-spy="scroll" data-bs-target="#navbar navbar-expand-lg navbar-light bg-dark" data-bs-offset="20" tabindex="20">
+    <div id="about_me">
+      
+      <div class="details">
+        <div id="myimage">
+            {% load static %}
+          <img id="img_my"  src="{% static 'customer/images/background.jpg' %}">
+        </div>
+        <h2 align="center">About Me </h2>
+        
+      
+</div>
+-->
 
 {% endblock %}

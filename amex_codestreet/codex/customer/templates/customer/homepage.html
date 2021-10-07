@@ -15,25 +15,33 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
         <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
+        {% load static %}
+        <link href="{% static 'customer/css/global.css' %}" type="text/css" rel="stylesheet">
+        <!--<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
         
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         {% load static %}
         <script src="{% static 'customer/form.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
     </head>
 
     <body>
 
         <body>
-            <div style=" width: 100%; height: 200%;" class="header container-fluid" class="text-center">
+            <div style=" width: 100%; height: 200%;background-color: black;" class="header container-fluid" class="text-center" >
               
-                <h1 style="color: rgb(245, 241, 35);font-variant: small-caps; text-align: center;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 390%; background-color: rgba(24, 23, 19, 0.4);">CODEX</h1>
+                <h1 style="color: rgb(245, 241, 35);font-variant: small-caps; text-align: center;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 390%;background-color: rgba(24, 23, 19, 0.4); ">CODEX</h1>
                 <h1 style="color:rgb(234, 243, 242);font-variant: small-caps; text-align: center;background-color: rgba(19, 18, 15, 0.4);">  AI-Enabled Portal for Finance</h1>
             </div>
 
               
-        <div class="container">
+        <div style="background-color: rgb(30, 21, 83)">
             {% block body %}
             
             {% endblock %}

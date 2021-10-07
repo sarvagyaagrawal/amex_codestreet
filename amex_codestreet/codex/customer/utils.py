@@ -6,11 +6,11 @@ def calc_debt(total_debt,amt, rate, time=6):
     ''' time in months'''
     tot=amt
     for i in range(time):
-        tot+= (tot * (1-rate/100))
+        tot+= (tot * (rate/100))
     return tot + total_debt
 
-def calc_minimum_amt(total_min, mini_amt,):
-    return total_min + mini_amt
+def calc_minimum_amt(mini_amt2, mini_amt1):
+    return mini_amt2 + mini_amt1
 
 def income_future_calc(income,time=6):
     return income*time

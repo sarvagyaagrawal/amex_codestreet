@@ -18,7 +18,9 @@ from django.template import Context, Engine, TemplateDoesNotExist, loader
 from urllib.parse import quote
 from .model_pred import *
 import requests
-from utils import *
+from .utils import *
+from .linear_regress_model import *
+from .optimize import *
 ######################################################################
 
 
@@ -35,6 +37,7 @@ def index(request):
 def fetchdata(request):
     customer_det=Customer_details.objects.filter(user=request.user)
     future=future_banking.objects.filter(user=request.user)
+    # present=present_banking.objects.filter(user=request.user)
     return customer_det, future
 ####################################################################
 #This function is used when user logs in!  
@@ -203,7 +206,7 @@ def get_personal_info(request):
 def generate_data_from_bank(request):
     try:
         cust_det=Customer_details.objects.get(user=request.user)
-        url_gen="http://127.0.0.1:8000/bank/" + str(cust_det.UBI) + "?format=json"
+        url_gen="http://127.0.0.1:8000/bank/" + str(cust_det.U_Bank_Id) + "?format=json"
         response=requests.get(url_gen)
 
         data_json=response.json()
@@ -213,36 +216,67 @@ def generate_data_from_bank(request):
                     "message3": "Bank Authorization not provided!",
             })
         else:
+            balance=int(data_json["data"]["balance"])
+            spend_mon1=int(data_json["data"]["amt_withdraw"]["amt1"])
+            spend_mon2=int(data_json["data"]["amt_withdraw"]["amt2"])
+            spend_mon3=int(data_json["data"]["amt_withdraw"]["amt3"])
+            spend_mon4=int(data_json["data"]["amt_withdraw"]["amt4"])
+            income_fut=income_future_calc(cust_det.c_income)
+
+
+            due_cred=calc_debt(0,int(data_json["data"]["credit"]["due_amt"]),int(data_json["data"]["credit"]["int_rate"]))
+            due_loan=calc_debt(due_cred,int(data_json["data"]["loan"]["due_amt"]),int(data_json["data"]["loan"]["int_rate"]))
+            #here, due total is same as due_loan, see utils.py
+            tot_due_amt=due_loan
+            
+            cust_det_dictionary=obj_to_dict(cust_det)
+
+            debt_to_inc=debt_to_inc_ratio_calc(tot_due_amt,int(cust_det_dictionary["c_income"]))
+            due_amt_curr=int(data_json["data"]["credit"]["due_amt"]) + int(data_json["data"]["loan"]["due_amt"])
+            minimum=int(data_json["data"]["credit"]["mini_amt"]) + int(data_json["data"]["loan"]["mini_amt"])
+
+            tot_spendings_fut,monthly_spend_fut=calc_future_spendings_linear_regress(spend_mon2,spend_mon1,spend_mon3,spend_mon4)
+            saving_monthly=monthly_pred_saving(monthly_spend_fut,int(cust_det_dictionary["c_income"]))
+            total_savings=calc_total_savings(balance,saving_monthly)
+
+            spend_to_save=spending_to_saving(tot_spendings_fut,total_savings)
             try:
                 cust=present_banking.objects.get(user=request.user)
+                cust.b_balance=balance
+
+                cust.b_spend_mon1=spend_mon1
+                cust.b_spend_mon2=spend_mon2
+                cust.b_spend_mon3=spend_mon3
+                cust.b_spend_mon4=spend_mon4
+                cust.b_income_fut=income_fut
+                cust.b_due_amt_fut=tot_due_amt
+                cust.b_debt_to_inc=debt_to_inc
+                cust.b_due_amt_curr=due_amt_curr
+                cust.b_minimum=minimum
+                cust.b_spendings_fut=tot_spendings_fut
+                cust.b_saving_monthly=saving_monthly
+                cust.b_total_savings=total_savings
+                cust.b_spend_to_save=spend_to_save
+                cust.save()
+
+                return render(request, 'customer/dashboard.html', {
+                    "message3": "Data fetched and updated successfully !",
+                })
                 #update the existing values in database
             except present_banking.DoesNotExist:
                 '''
                     Getting values from api and storing them in our database
                 '''
-                balance=int(data_json["data"]["credit"]["balance"])
-                spend_mon1=int(data_json["data"]["amt_withdraw"]["amt1"])
-                spend_mon2=int(data_json["data"]["amt_withdraw"]["amt2"])
-                spend_mon3=int(data_json["data"]["amt_withdraw"]["amt3"])
-                spend_mon4=int(data_json["data"]["amt_withdraw"]["amt4"])
-                income_fut=income_future_calc(cust_det.c_income)
-
-
-                due_cred=calc_debt(0,int(data_json["data"]["credit"]["due_amt"]),int(data_json["data"]["credit"]["int_rate"]))
-                due_loan=calc_debt(due_cred,int(data_json["data"]["loan"]["due_amt"]),int(data_json["data"]["loan"]["int_rate"]))
-                #here, due total is same as due_loan, see utils.py
-                tot_due_amt=due_loan
-                cust_det_dictionary=obj_to_dict(cust_det)
-                debt_to_inc=debt_to_inc_ratio_calc(tot_due_amt,cust_det_dictionary["c_income"])
-                due_amt_curr=int(data_json["data"]["credit"]["due_amt"]) + int(data_json["data"]["loan"]["due_amt"])
-                minimum=int(data_json["data"]["credit"]["mini_amt"]) + int(data_json["data"]["loan"]["mini_amt"])
-
+         
                 cust=present_banking(user=request.user,b_balance=balance,b_spend_mon1=spend_mon1,b_spend_mon2=spend_mon2,b_spend_mon3=spend_mon3,b_spend_mon4=spend_mon4,
-                b_income_fut=income_fut,b_due_amt_fut=tot_due_amt,b_debt_to_inc=debt_to_inc,b_due_amt_curr=due_amt_curr, b_minimum=minimum)
+                b_income_fut=income_fut,b_due_amt_fut=tot_due_amt,b_debt_to_inc=debt_to_inc,b_due_amt_curr=due_amt_curr, b_minimum=minimum, b_spendings_fut=tot_spendings_fut,b_saving_monthly=saving_monthly,
+                b_total_savings=total_savings,b_spend_to_save=spend_to_save)
 
                 cust.save()
 
-
+                return render(request, 'customer/dashboard.html', {
+                    "message3": "Data fetched successfully !",
+                })
 
 
     except Customer_details.DoesNotExist:
@@ -260,11 +294,24 @@ def riskfactor(request):
     try:
         
         cust_future=future_banking.objects.get(user=request.user)
+        cust=Customer_details.objects.get(user=request.user)
+        present_banking_det=present_banking.objects.get(user=request.user)
         curr=getData(request)
         predict=getPredictions(curr)
         cust_future.b_risk_score=predict
-        cust_future.save()
+        
         customer_det,fut=fetchdata(request)
+        pres_dictionary=obj_to_dict(present_banking_det)
+        saving=float(pres_dictionary["b_total_savings"])
+        spending=float(pres_dictionary["b_spendings_fut"])
+        income=float(pres_dictionary["b_income_fut"])
+        minimum=float(pres_dictionary["b_minimum"])
+        save_opt, spend_opt= optimize_values(saving,spending,income,minimum)
+
+        cust_future.b_savings_opt=save_opt
+        cust_future.b_spend_opt=spend_opt
+        cust_future.save()
+
         return render(request, 'customer/dashboard.html', {
                     "message3": "Risk Score calculated successfully!",
                     "cust":customer_det,
@@ -280,14 +327,27 @@ def riskfactor(request):
         try:
             cust=present_banking.objects.get(user=request.user)
         except present_banking.DoesNotExist:
+            customer_det,fut=fetchdata(request)
             return render(request, 'customer/dashboard.html', {
                     "message3": "Risk Score Cannot be calculated due to insufficient information!",
+                    "cust":customer_det
+                    
             })
         curr=getData(request)
         predict=getPredictions(curr)
         cust_future=future_banking(user=request.user, b_risk_score=predict)
-        cust_future.save()
+        
         customer_det,fut=fetchdata(request)
+        pres_dictionary=obj_to_dict(present_banking_det)
+        saving=float(pres_dictionary["b_total_savings"])
+        spending=float(pres_dictionary["b_due_amt_curr"])
+        income=float(pres_dictionary["b_income_fut"])/6
+        minimum=float(pres_dictionary["b_minimum"])
+        save_opt, spend_opt= optimize_values(saving,spending,income,minimum)
+
+        cust_future.b_savings_opt=save_opt
+        cust_future.b_spend_opt=spend_opt
+        cust_future.save()
         return render(request, 'customer/dashboard.html', {
                     "message3": "Risk Score calculated successfully!",
                     "cust":customer_det,

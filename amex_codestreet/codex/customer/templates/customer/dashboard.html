@@ -80,15 +80,18 @@
             <h3 style="color: sienna; text-align: center;background-color:moccasin">{{ message3 }}</h3>
         {% endif %}
         {% for p in future%}
-            <h2 style="color: brown;text-align: center;">Calculated Risk Score is {{p.b_risk_score}}</h2>
+            <h2 style="color: brown;text-align: center;padding: 2%;">Calculated Risk Score is {{p.b_risk_score}}</h2>
+            
+            <h2 style="color: brown;text-align: center;padding: 2%;">Maximize your savings in next 6 months to Rs.25000</h2>
+            <h2 style="color: brown;text-align: center;padding: 2%;">Minimize your spendings in next 6 months to Rs. 12000</h2>
         {% endfor %}
 
-        <div style="text-align: center;">
-            <h2>Step 1: Fetch Data From your Bank</h2>/
-            <a class="btn btn-warning" href="{% url 'generate_data_from_bank' %}">Calculate Risk Factor</a>
+        <div style="text-align: center;padding: 2%;">
+            <h2>Step 1: Fetch Data From your Bank</h2>
+            <a class="btn btn-warning" href="{% url 'generate_data_from_bank' %}">Fetch</a>
         </div>
 
-        <div style="text-align: center;">
+        <div style="text-align: center;padding: 2%;">
             <h2>Step 2: Generate Risk Score</h2>
             <a class="btn btn-warning" href="{% url 'riskfactor' %}">Calculate Risk Factor</a>
         </div>

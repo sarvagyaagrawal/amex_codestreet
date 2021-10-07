@@ -24,47 +24,48 @@ class Customer_details(models.Model):
 class present_banking(models.Model):
     user = models.ForeignKey(User,null=True, on_delete=models.CASCADE)
     
-    b_due_amt_curr= models.BigIntegerField()
+    b_due_amt_curr= models.CharField(max_length=30) #done
     
-    b_balance=models.BigIntegerField() #done
+    b_balance=models.CharField(max_length=30) #done
 
-    b_saving_monthly=models.BigIntegerField()
+    b_saving_monthly=models.CharField(max_length=30) #done
 
-    b_total_savings=models.BigIntegerField()
+    b_total_savings=models.CharField(max_length=30) #done
     
 
-    b_spend_mon1=models.BigIntegerField()
-    b_spend_mon2=models.BigIntegerField()
-    b_spend_mon3=models.BigIntegerField()
-    b_spend_mon4=models.BigIntegerField()
+    b_spend_mon1=models.CharField(max_length=30) #done
+    b_spend_mon2=models.CharField(max_length=30) #done
+    b_spend_mon3=models.CharField(max_length=30) #done
+    b_spend_mon4=models.CharField(max_length=30) #done
     
     
     #amount calculated from the credit cards and loans
-    b_due_amt_fut=models.BigIntegerField()
-
+    b_due_amt_fut=models.CharField(max_length=30) #done
+ 
     #future income=present_income*6
-    b_income_fut=models.BigIntegerField()
+    b_income_fut=models.CharField(max_length=30) #done
 
-    b_debt_to_inc=models.FloatField()
-    b_spend_to_save=models.FloatField()
+    b_debt_to_inc=models.CharField(max_length=30) #done
+
+    b_spend_to_save=models.CharField(max_length=30) #done
     
-    b_income=models.BigIntegerField()
+    # b_income=models.BigIntegerField() #done
     #from regression model
-    b_spendings_fut=models.BigIntegerField()
+    b_spendings_fut=models.CharField(max_length=30) #done
 
-    b_minimum=models.BigIntegerField()
+    b_minimum=models.CharField(max_length=30) #done
 
 
     def __str__(self):
-         return f"{self.id} {self.b_due_amt_curr} {self.b_balance} {self.b_saving_monthly} {self.b_total_savings} {self.b_spend_mon1} {self.b_spend_mon2} {self.b_spend_mon3} {self.b_spend_mon4} {self.b_due_amt_fut} {self.b_income_fut} {self.b_debt_to_inc}  {self.b_spend_to_save} {self.b_income} {self.b_spendings_fut} "
+         return f"{self.id} {self.b_due_amt_curr} {self.b_balance} {self.b_saving_monthly} {self.b_total_savings} {self.b_spend_mon1} {self.b_spend_mon2} {self.b_spend_mon3} {self.b_spend_mon4} {self.b_due_amt_fut} {self.b_income_fut} {self.b_debt_to_inc}  {self.b_spend_to_save} {self.b_spendings_fut} "
 
 
 class future_banking(models.Model):
     user = models.ForeignKey(User,null=True, on_delete=models.CASCADE)
     
-    b_savings_opt=models.BigIntegerField()
-    b_spend_opt=models.BigIntegerField()
-    b_risk_score=models.FloatField()
+    b_savings_opt=models.CharField(null=True,blank=True,max_length=30)
+    b_spend_opt=models.CharField(null=True,blank=True,max_length=30)
+    b_risk_score=models.CharField(null=True,blank=True,max_length=30)
 
     def __str__(self):
          return f"{self.id} {self.b_savings_opt} {self.b_spend_opt} {self.b_risk_score}"

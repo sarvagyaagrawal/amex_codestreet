@@ -85,11 +85,11 @@ def getPredictions(curr):
     # curr= json.loads(cust_det)
     # curr= json.loads(fut_fin)
     print("/n cuur serailzer print:",curr)
-    tot_inc=return_income(curr["b_income_fut"])
-    tot_debt=return_debt(curr['b_due_amt_fut'])
-    debt_to_inc=curr['b_debt_to_inc']
-    tot_saving=curr['b_total_savings']
-    spending_to_saving=curr['b_spend_to_save']
+    tot_inc=return_income(float(curr["b_income_fut"]))
+    tot_debt=return_debt(float(curr['b_due_amt_fut']))
+    debt_to_inc=float(curr['b_debt_to_inc'])
+    tot_saving=float(curr['b_total_savings'])
+    spending_to_saving=float(curr['b_spend_to_save'])
 
     #model unpacking begins from here
     pipe=pickle.load(open("customer/final_model.sav", "rb"))
@@ -98,7 +98,7 @@ def getPredictions(curr):
 
     pred=pipe.predict_proba([[tot_inc,debt_to_inc,spending_to_saving,tot_saving]])
     result=pred.tolist()
-    return result[0][1]
+    return "{:.2f}".format(result[0][1])
 
 
     

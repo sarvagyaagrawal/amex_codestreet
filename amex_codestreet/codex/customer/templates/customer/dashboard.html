@@ -2,7 +2,7 @@
 
 {% block body %}
 <style>
-    form {
+    .hide {
         display: none;
     }
 </style>
@@ -10,11 +10,13 @@
 
 {% load static %}
 <script src="{% static 'customer/form.js' %}"></script>
+<div class="name_head">
+<h2 class="container"style="padding: 2%;">Dear {{request.user.username}}!</h2>
+<h1 class="head1" ></h1>
+</div>
 
-<h2>Dear</h2>
-<h1 style="color: brown; background-color: burlywood;font-style: italic;">{{request.user.username}}</h1>
 
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
+<div class="alert alert-warning alert-dismissible fade show container" role="alert">
     {% if message %}
         <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3>
         <button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
@@ -30,7 +32,7 @@
 </div>
 
 <!------------------------------------------------------------------------->
-<form class="personal-form" action="{% url 'personal_details'  %}" method="post" id="personal_info">
+<form class="container personal-form " action="{% url 'personal_details'  %}" method="post" id="personal_info">
     {% csrf_token %}
     <br>
     <h2 style="color: blue;">Please fill your details!</h2>
@@ -55,7 +57,7 @@
     <input class="btn btn-primary" type="submit" value="submit form">
 </form>
 <!------------------------------------------------------------------------->
-<form class="personal-form" id="view_my_UBI">
+<form class="personal-form hide" id="view_my_UBI">
     <br>
     
     <h4 style="text-align: center;"> Your Unique Bank Id (UBI) is:</h4>
@@ -71,27 +73,30 @@
         <h5 style="text-align: center;color: crimson;padding: 2%;"> Incase of any suspicious activities, report the matter to us immediately! </h4>
 </form>
 <!------------------------------------------------------------------------->
-<form class="personal-form" id="my_finance">
+<form class="personal-form hide" id="my_finance">
         <h4 style="color: darkblue;padding-top: 4%;text-align: center;"> See where you will stand?</h4>
         
        
-
-        {% if message3 %}
-            <h3 style="color: sienna; text-align: center;background-color:moccasin">{{ message3 }}</h3>
-        {% endif %}
-        {% for p in future%}
-            <h2 style="color: brown;text-align: center;padding: 2%;">Calculated Risk Score is {{p.b_risk_score}}</h2>
-            
-            <h2 style="color: brown;text-align: center;padding: 2%;">Maximize your savings in next 6 months to Rs.25000</h2>
-            <h2 style="color: brown;text-align: center;padding: 2%;">Minimize your spendings in next 6 months to Rs. 12000</h2>
-        {% endfor %}
-
-        <div style="text-align: center;padding: 2%;">
+        <div>
+                {% if message3 %}
+                    <h3 style="color: rgb(191, 204, 223); text-align: center;background-color:rgb(71, 9, 100)">{{ message3 }}</h3>
+                {% endif %}
+                {% for p in future%}
+                <div class="plans">
+                    <h2 >Calculated Risk Score is {{p.b_risk_score}}</h2>
+                </div>
+                <div>
+                    <h2 style="color: brown;text-align: center;padding: 2%;">Maximize your savings in next 6 months to Rs. {{p.b_savings_opt}} </h2>
+                    <h2 style="color: brown;text-align: center;padding: 2%;">Minimize your spendings in next 6 months to Rs. {{p.b_spend_opt}}</h2>
+                </div>
+                    {% endfor %}
+        </div>
+        <div class="steps" style="text-align: center;padding: 2%;">
             <h2>Step 1: Fetch Data From your Bank</h2>
             <a class="btn btn-warning" href="{% url 'generate_data_from_bank' %}">Fetch</a>
         </div>
 
-        <div style="text-align: center;padding: 2%;">
+        <div class="steps" style="text-align: center;padding: 2%;">
             <h2>Step 2: Generate Risk Score</h2>
             <a class="btn btn-warning" href="{% url 'riskfactor' %}">Calculate Risk Factor</a>
         </div>

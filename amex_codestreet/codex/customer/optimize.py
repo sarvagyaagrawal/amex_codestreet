@@ -35,4 +35,4 @@ def optimize_values(saving,spending,income,minimum):
     assert problem4.is_dqcp()
     
     
-    return (x1.value)*saving*6, (x2.value)*spending*6
+    return int((x1.value))*saving*6, int((x2.value))*spending*6

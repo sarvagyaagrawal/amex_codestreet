@@ -4,9 +4,12 @@
 
 <h2>Register</h2>
 
-{% if message %}
-    <div>{{ message }}</div>
-{% endif %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {% if message %}
+        <h3 style="color: rgb(224, 95, 36);padding-top: 2%;padding-bottom: 2%;">{{ message }}</h3><button type="button" class="btn-close btn-close-white btn-success" data-bs-dismiss="alert" aria-label="Close">Close</button>
+        
+    {% endif %}
+</div>
 <!------------------------------------------------------------------------->
 
 

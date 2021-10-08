@@ -206,7 +206,7 @@ def get_personal_info(request):
 def generate_data_from_bank(request):
     try:
         cust_det=Customer_details.objects.get(user=request.user)
-        url_gen="http://127.0.0.1:8000/bank/" + str(cust_det.U_Bank_Id) + "?format=json"
+        url_gen="https://fin-bank-login.herokuapp.com/bank/" + str(cust_det.U_Bank_Id) + "?format=json"
         response=requests.get(url_gen)
 
         data_json=response.json()
@@ -216,12 +216,13 @@ def generate_data_from_bank(request):
                     "message3": "Bank Authorization not provided!",
             })
         else:
+            cust_det_dictionary=obj_to_dict(cust_det)
             balance=int(data_json["data"]["balance"])
             spend_mon1=int(data_json["data"]["amt_withdraw"]["amt1"])
             spend_mon2=int(data_json["data"]["amt_withdraw"]["amt2"])
             spend_mon3=int(data_json["data"]["amt_withdraw"]["amt3"])
             spend_mon4=int(data_json["data"]["amt_withdraw"]["amt4"])
-            income_fut=income_future_calc(cust_det.c_income)
+            income_fut=income_future_calc(int(cust_det_dictionary["c_income"]))
 
 
             due_cred=calc_debt(0,int(data_json["data"]["credit"]["due_amt"]),int(data_json["data"]["credit"]["int_rate"]))
@@ -229,7 +230,7 @@ def generate_data_from_bank(request):
             #here, due total is same as due_loan, see utils.py
             tot_due_amt=due_loan
             
-            cust_det_dictionary=obj_to_dict(cust_det)
+            
 
             debt_to_inc=debt_to_inc_ratio_calc(tot_due_amt,int(cust_det_dictionary["c_income"]))
             due_amt_curr=int(data_json["data"]["credit"]["due_amt"]) + int(data_json["data"]["loan"]["due_amt"])
@@ -307,7 +308,14 @@ def riskfactor(request):
         income=float(pres_dictionary["b_income_fut"])
         minimum=float(pres_dictionary["b_minimum"])
         save_opt, spend_opt= optimize_values(saving,spending,income,minimum)
-
+        # save_opt="{:.2f}".format(save_opt)
+        # spend_opt="{:.2f}".format(spend_opt)
+        if spend_opt<minimum:
+            spend_opt=minimum
+        if save_opt<saving:
+            save_opt=saving
+        save_opt="{:.2f}".format(save_opt)
+        spend_opt="{:.2f}".format(spend_opt)
         cust_future.b_savings_opt=save_opt
         cust_future.b_spend_opt=spend_opt
         cust_future.save()
@@ -319,7 +327,7 @@ def riskfactor(request):
                 })
     except future_banking.DoesNotExist:
         try:
-            cust=Customer_details.objects.get(user=request.user)
+            cust1=Customer_details.objects.get(user=request.user)
         except Customer_details.DoesNotExist:
             return render(request, 'customer/dashboard.html', {
                     "message3": "Risk Score Cannot be calculated due to insufficient information!",
@@ -335,26 +343,36 @@ def riskfactor(request):
             })
         curr=getData(request)
         predict=getPredictions(curr)
-        cust_future=future_banking(user=request.user, b_risk_score=predict)
+        #catch
+        # cust_future=future_banking(user=request.user, b_risk_score=predict)
         
-        customer_det,fut=fetchdata(request)
-        pres_dictionary=obj_to_dict(present_banking_det)
+        pres_dictionary=obj_to_dict(cust)
         saving=float(pres_dictionary["b_total_savings"])
         spending=float(pres_dictionary["b_due_amt_curr"])
         income=float(pres_dictionary["b_income_fut"])/6
         minimum=float(pres_dictionary["b_minimum"])
         save_opt, spend_opt= optimize_values(saving,spending,income,minimum)
-
-        cust_future.b_savings_opt=save_opt
-        cust_future.b_spend_opt=spend_opt
+        
+        if spend_opt<minimum:
+            spend_opt=minimum
+        # cust_future.b_savings_opt=save_opt
+        # cust_future.b_spend_opt=spend_opt
+        save_opt="{:.2f}".format(save_opt)
+        spend_opt="{:.2f}".format(spend_opt)
+        cust_future=future_banking(user=request.user, b_risk_score=predict,b_savings_opt=save_opt,b_spend_opt=spend_opt)
         cust_future.save()
+
+        customer_det,fut=fetchdata(request)
+
         return render(request, 'customer/dashboard.html', {
                     "message3": "Risk Score calculated successfully!",
                     "cust":customer_det,
                     "future":fut
                 })
     
-
+#########################################################
+def error_404(request, exception):
+    return render(request,'bankcustomer/404.html')
 
 
        

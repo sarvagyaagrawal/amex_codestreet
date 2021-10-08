@@ -116,7 +116,7 @@ body{
     color:blanchedalmond;
     margin: 30px;
     padding: 50px;
-    background-image:url("customer/images/background.jpg");
+    
     background-repeat: repeat;
     box-shadow: 2px 4px 4px 8px rgb(92, 89, 89);
     animation-name: easeout;
